@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intégral par partie — Spécialité Mathématiques Terminale</title>
+    
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Police Inter pour une lisibilité optimale -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icônes Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration MathJax v3 pour le rendu typographique LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <!-- Configuration personnalisée de la palette -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bleuNuit: '#182B45',
+                        bleuMarine: '#243B63',
+                        bleuAcier: '#5479B8',
+                        bleuGlacier: '#D5E4F4',
+                        bleuPale: '#F5F8FC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F5F8FC;
+            color: #182B45;
+        }
+        .chat-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: #D5E4F4;
+            border-radius: 10px;
+        }
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen selection:bg-bleuAcier selection:text-white">
+
+    <!-- ================= EN-TÊTE ET NAVIGATION ================= -->
+    <header class="sticky top-0 z-40 bg-bleuNuit text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo et Titre -->
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-bleuAcier text-white flex items-center justify-center font-bold text-xl shadow-inner border border-bleuGlacier/30">
+                        $\int$
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl tracking-tight leading-none text-white">Intégral par partie</h1>
+                        <span class="text-xs text-bleuGlacier font-medium tracking-wider uppercase">Terminale • Spécialité Maths</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Desktop (5 rubriques) -->
+                <nav class="hidden lg:flex items-center gap-1.5">
+                    <button onclick="switchTab('decouverte')" id="tab-decouverte" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-semibold bg-bleuAcier text-white transition-all">
+                        1. Activité de découverte
+                    </button>
+                    <button onclick="switchTab('cours')" id="tab-cours" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium text-bleuGlacier hover:bg-bleuMarine hover:text-white transition-all">
+                        2. Point de note
+                    </button>
+                    <button onclick="switchTab('exercices')" id="tab-exercices" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium text-bleuGlacier hover:bg-bleuMarine hover:text-white transition-all">
+                        3. Exercices d'application
+                    </button>
+                    <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium text-bleuGlacier hover:bg-bleuMarine hover:text-white transition-all">
+                        4. Quiz
+                    </button>
+                    <button onclick="switchTab('qcm')" id="tab-qcm" class="nav-tab px-3.5 py-2 rounded-xl text-sm font-medium text-bleuGlacier hover:bg-bleuMarine hover:text-white transition-all">
+                        5. QCM (4 options)
+                    </button>
+                </nav>
+
+                <!-- Bouton Coach IA & Menu Mobile -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleAIChat(true)" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-bleuGlacier text-bleuNuit hover:bg-white font-semibold text-sm transition-all shadow-sm">
+                        <i data-lucide="bot" class="w-4 h-4 text-bleuMarine"></i>
+                        <span class="hidden sm:inline">Coach Maths Terminale</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" aria-label="Menu" class="lg:hidden p-2.5 rounded-xl bg-bleuMarine text-bleuGlacier hover:text-white">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-bleuMarine border-t border-bleuAcier/30 px-4 py-3 space-y-1.5">
+            <button onclick="switchTab('decouverte'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-bleuAcier/40">1. Activité de découverte</button>
+            <button onclick="switchTab('cours'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-bleuAcier/40">2. Point de note</button>
+            <button onclick="switchTab('exercices'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-bleuAcier/40">3. Exercices d'application</button>
+            <button onclick="switchTab('quiz'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-bleuAcier/40">4. Quiz</button>
+            <button onclick="switchTab('qcm'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-white hover:bg-bleuAcier/40">5. QCM (4 options)</button>
+        </div>
+    </header>
+
+    <!-- ================= BANDEAU D'ACCUEIL PÉDAGOGIQUE ================= -->
+    <section class="bg-white border-b border-bleuGlacier py-8 sm:py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bleuGlacier/60 text-bleuMarine text-xs font-bold uppercase tracking-wider mb-3">
+                    Programme Terminale • Calcul Intégral
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-bleuNuit tracking-tight">
+                    Maîtriser l’intégration par parties <span class="text-bleuAcier">pas à pas</span>
+                </h2>
+                <p class="text-bleuMarine/80 text-sm sm:text-base mt-2 leading-relaxed">
+                    Redécouvre la formule à partir de la dérivation, applique l'astuce <strong>ALPES</strong> pour choisir $u$ et $v'$, entraîne-toi sur des intégrales type Bac et sollicite ton Coach IA à tout moment.
+                </p>
+            </div>
+            <div class="bg-bleuPale border border-bleuGlacier rounded-2xl p-4 sm:p-5 flex items-center gap-4 shrink-0">
+                <div class="w-12 h-12 rounded-xl bg-bleuMarine text-white flex items-center justify-center shrink-0">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase text-bleuAcier">Accompagnement Socratique</p>
+                    <p class="text-sm font-medium text-bleuNuit">Un doute sur un choix ou un calcul ?</p>
+                    <button onclick="toggleAIChat(true)" class="text-xs font-bold text-bleuMarine underline hover:text-bleuAcier mt-0.5">
+                        Demander un indice au Coach Maths →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CONTENU PRINCIPAL (5 RUBRIQUES) ================= -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+
+        <!-- ================================================================
+             RUBRIQUE 1 : ACTIVITÉ DE DÉCOUVERTE
+             ================================================================ -->
+        <section id="section-decouverte" class="tab-section space-y-6">
+            <div class="border-b border-bleuGlacier pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-bleuAcier">Rubrique 1</span>
+                <h2 class="text-2xl font-bold text-bleuNuit mt-1">Activité de découverte : D’où vient la formule ?</h2>
+                <p class="text-sm text-bleuMarine/80 mt-1">Suis ces 3 étapes guidées pour démontrer par toi-même le théorème de l'intégration par parties.</p>
+            </div>
+
+            <!-- Étape 1 -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-lg bg-bleuMarine text-white text-xs font-bold">Étape 1 / 3 • Dérivation d'un produit</span>
+                    <button onclick="toggleHint('disc-hint-1')" class="text-xs font-semibold text-bleuAcier hover:underline flex items-center gap-1">
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Besoin d'un indice ?
+                    </button>
+                </div>
+                <p class="text-base text-bleuNuit leading-relaxed">
+                    Soient $u$ et $v$ deux fonctions dérivables sur un intervalle $[a\,;\,b]$. Quelle est l'expression exacte de la dérivée du produit $(u \cdot v)'(x)$ ?
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <button onclick="checkDiscoveryStep1('wrong1')" class="p-3.5 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-center font-medium text-bleuNuit bg-bleuPale/50 transition-all">
+                        $u'(x) \cdot v'(x)$
+                    </button>
+                    <button onclick="checkDiscoveryStep1('correct')" class="p-3.5 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-center font-medium text-bleuNuit bg-bleuPale/50 transition-all">
+                        $u'(x)v(x) + u(x)v'(x)$
+                    </button>
+                    <button onclick="checkDiscoveryStep1('wrong2')" class="p-3.5 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-center font-medium text-bleuNuit bg-bleuPale/50 transition-all">
+                        $u'(x)v(x) - u(x)v'(x)$
+                    </button>
+                </div>
+                <div id="disc-hint-1" class="hidden p-3.5 rounded-xl bg-bleuGlacier/50 text-bleuNuit text-sm">
+                    💡 <strong>Indice :</strong> Attention, la dérivée d'un produit n'est pas égale au produit des dérivées ! On dérive la première fonction fois la seconde, <strong>plus</strong> la première fois la dérivée de la seconde.
+                </div>
+                <div id="disc-fb-1" class="hidden p-3.5 rounded-xl text-sm font-medium"></div>
+            </div>
+
+            <!-- Étape 2 -->
+            <div id="disc-step-2" class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4 opacity-60 pointer-events-none transition-all">
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-lg bg-bleuAcier text-white text-xs font-bold">Étape 2 / 3 • Passage à l'intégrale</span>
+                    <button onclick="toggleHint('disc-hint-2')" class="text-xs font-semibold text-bleuAcier hover:underline flex items-center gap-1">
+                        <i data-lucide="lightbulb" class="w-4 h-4"></i> Besoin d'un indice ?
+                    </button>
+                </div>
+                <p class="text-base text-bleuNuit leading-relaxed">
+                    On intègre l'égalité $(u \cdot v)'(x) = u'(x)v(x) + u(x)v'(x)$ entre $a$ et $b$ (en supposant $u'$ et $v'$ continues) :
+                    $$\int_a^b (u \cdot v)'(x)\,dx = \int_a^b u'(x)v(x)\,dx + \int_a^b u(x)v'(x)\,dx$$
+                    Par le théorème fondamental du calcul intégral, à quoi est égal le membre de gauche $\int_a^b (u \cdot v)'(x)\,dx$ ?
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="checkDiscoveryStep2('correct')" class="p-3.5 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-center font-medium text-bleuNuit bg-bleuPale/50 transition-all">
+                        $\Big[u(x)v(x)\Big]_a^b = u(b)v(b) - u(a)v(a)$
+                    </button>
+                    <button onclick="checkDiscoveryStep2('wrong')" class="p-3.5 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-center font-medium text-bleuNuit bg-bleuPale/50 transition-all">
+                        $\Big[u'(x)v'(x)\Big]_a^b = u'(b)v'(b) - u'(a)v'(a)$
+                    </button>
+                </div>
+                <div id="disc-hint-2" class="hidden p-3.5 rounded-xl bg-bleuGlacier/50 text-bleuNuit text-sm">
+                    💡 <strong>Indice :</strong> Une primitive de la dérivée $(u \cdot v)'$ est tout simplement la fonction produit $(u \cdot v)$ elle-même !
+                </div>
+                <div id="disc-fb-2" class="hidden p-3.5 rounded-xl text-sm font-medium"></div>
+            </div>
+
+            <!-- Étape 3 : Synthèse -->
+            <div id="disc-step-3" class="hidden bg-bleuNuit text-white rounded-2xl p-6 sm:p-8 shadow-md space-y-4">
+                <span class="px-3 py-1 rounded-lg bg-bleuAcier text-white text-xs font-bold uppercase">Étape 3 / 3 • Bravo, tu viens d'établir la formule !</span>
+                <p class="text-bleuGlacier text-sm sm:text-base leading-relaxed">
+                    En isolant $\int_a^b u(x)v'(x)\,dx$ dans l'égalité précédente, on obtient la formule officielle d'intégration par parties :
+                </p>
+                <div class="p-4 rounded-xl bg-bleuMarine border border-bleuAcier/50 text-center text-lg sm:text-xl overflow-x-auto">
+                    $$\int_a^b u(x)v'(x)\,dx = \Big[u(x)v(x)\Big]_a^b - \int_a^b u'(x)v(x)\,dx$$
+                </div>
+                <div class="flex flex-wrap justify-between items-center gap-4 pt-2">
+                    <p class="text-xs text-bleuGlacier">Découvre maintenant les hypothèses de régularité $\mathcal{C}^1$ et l'astuce ALPES.</p>
+                    <button onclick="switchTab('cours')" class="px-5 py-2.5 rounded-xl bg-bleuGlacier text-bleuNuit hover:bg-white font-bold text-sm transition-all">
+                        Passer au Point de note →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             RUBRIQUE 2 : POINT DE NOTE (COURS SYNTHÉTIQUE)
+             ================================================================ -->
+        <section id="section-cours" class="tab-section hidden space-y-6">
+            <div class="border-b border-bleuGlacier pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-bleuAcier">Rubrique 2</span>
+                <h2 class="text-2xl font-bold text-bleuNuit mt-1">Point de note : Fiche de cours officielle</h2>
+                <p class="text-sm text-bleuMarine/80 mt-1">Les hypothèses indispensables, la formule encadrée et la méthode de rédaction attendue au Bac.</p>
+            </div>
+
+            <!-- Carte Théorème Encadré -->
+            <div class="bg-white border-2 border-bleuMarine rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center gap-2 text-bleuMarine font-bold text-lg">
+                        <i data-lucide="book-open" class="w-5 h-5 text-bleuAcier"></i>
+                        <h3>1. Théorème d'intégration par parties</h3>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg bg-bleuNuit text-white text-xs font-bold">Hypothèse clé : Classe $\mathcal{C}^1$</span>
+                </div>
+                <p class="text-sm sm:text-base text-bleuNuit leading-relaxed">
+                    Soient $u$ et $v$ deux fonctions <strong>dérivables</strong> sur un intervalle $I$ telles que leurs dérivées $u'$ et $v'$ soient <strong>continues</strong> sur $I$ (on dit que $u$ et $v$ sont de classe $\mathcal{C}^1$ sur $I$). Alors, pour tous réels $a$ et $b$ de $I$ :
+                </p>
+                <div class="p-5 rounded-xl bg-bleuPale border-2 border-bleuAcier text-center text-base sm:text-xl font-bold text-bleuNuit overflow-x-auto shadow-inner">
+                    $$\int_a^b u(x)v'(x)\,dx = \Big[u(x)v(x)\Big]_a^b - \int_a^b u'(x)v(x)\,dx$$
+                </div>
+                <p class="text-xs text-bleuMarine/80 italic">
+                    *Pour déterminer une primitive sur $I$ (sans bornes) : $\int u(x)v'(x)\,dx = u(x)v(x) - \int u'(x)v(x)\,dx$ (à une constante près).
+                </p>
+            </div>
+
+            <!-- Carte Méthode ALPES -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 text-bleuMarine font-bold text-lg">
+                        <i data-lucide="award" class="w-5 h-5 text-bleuAcier"></i>
+                        <h3>2. L'astuce mnémotechnique ALPES : Choisir $u(x)$ et $v'(x)$</h3>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-bleuGlacier text-bleuNuit text-xs font-bold">Priorité pour $u(x)$</span>
+                </div>
+                <p class="text-sm text-bleuNuit leading-relaxed">
+                    Dans le produit à intégrer, on choisit comme fonction <strong>$u(x)$ (celle que l'on dérive)</strong> la première famille qui apparaît dans l'acronyme <strong>A - L - P - E - S</strong> (l'autre facteur devient alors $v'(x)$, celle que l'on primitive) :
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                    <div class="p-4 rounded-xl bg-bleuNuit text-white text-center">
+                        <span class="text-2xl font-extrabold text-bleuGlacier block">A</span>
+                        <span class="font-bold text-sm block mt-1">Arctan</span>
+                        <span class="text-[11px] text-bleuGlacier/80">$\arctan(x)$</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-bleuMarine text-white text-center">
+                        <span class="text-2xl font-extrabold text-bleuGlacier block">L</span>
+                        <span class="font-bold text-sm block mt-1">Logarithme</span>
+                        <span class="text-[11px] text-bleuGlacier/80">$\ln(x)$</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-bleuAcier text-white text-center">
+                        <span class="text-2xl font-extrabold text-white block">P</span>
+                        <span class="font-bold text-sm block mt-1">Polynôme</span>
+                        <span class="text-[11px] text-bleuPale">$1, x, x^2, 3x-1$</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-bleuGlacier text-bleuNuit text-center">
+                        <span class="text-2xl font-extrabold text-bleuMarine block">E</span>
+                        <span class="font-bold text-sm block mt-1">Exponentielle</span>
+                        <span class="text-[11px] text-bleuMarine">$e^x, e^{-x}, e^{2x}$</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-bleuPale border border-bleuGlacier text-bleuNuit text-center">
+                        <span class="text-2xl font-extrabold text-bleuAcier block">S</span>
+                        <span class="font-bold text-sm block mt-1">Sinus / Cosinus</span>
+                        <span class="text-[11px] text-bleuMarine">$\sin(x), \cos(x)$</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modèle de rédaction type Bac -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4">
+                <h3 class="font-bold text-lg text-bleuMarine flex items-center gap-2">
+                    <i data-lucide="file-check" class="w-5 h-5 text-bleuAcier"></i>
+                    3. Modèle de rédaction type Bac : Calculer $I = \int_0^1 (x + 1)e^x\,dx$
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-bleuPale p-4 rounded-xl border border-bleuGlacier text-sm">
+                    <div>
+                        <p class="font-bold text-bleuMarine">1. Poser les fonctions (ALPES : P avant E) :</p>
+                        <ul class="mt-1.5 space-y-1 text-bleuNuit">
+                            <li>• $u(x) = x + 1 \implies u'(x) = 1$</li>
+                            <li>• $v'(x) = e^x \implies v(x) = e^x$</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="font-bold text-bleuMarine">2. Citer les hypothèses de régularité :</p>
+                        <p class="mt-1.5 text-bleuNuit">Les fonctions $u$ et $v$ sont dérivables sur $[0\,;\,1]$ et leurs dérivées $u'$ et $v'$ sont continues sur $[0\,;\,1]$ (fonctions de classe $\mathcal{C}^1$).</p>
+                    </div>
+                </div>
+                <div class="text-sm sm:text-base text-bleuNuit space-y-2 leading-relaxed">
+                    <p class="font-bold text-bleuMarine text-sm">3. Appliquer la formule et conclure :</p>
+                    <p>$$I = \Big[(x + 1)e^x\Big]_0^1 - \int_0^1 1 \cdot e^x\,dx = (2e^1 - 1e^0) - \Big[e^x\Big]_0^1 = (2e - 1) - (e - 1) = e$$</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             RUBRIQUE 3 : EXERCICES D'APPLICATION (3 EXERCICES PROGRESSIFS)
+             ================================================================ -->
+        <section id="section-exercices" class="tab-section hidden space-y-6">
+            <div class="border-b border-bleuGlacier pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-bleuAcier">Rubrique 3</span>
+                <h2 class="text-2xl font-bold text-bleuNuit mt-1">Exercices d'application progressifs</h2>
+                <p class="text-sm text-bleuMarine/80 mt-1">Traite ces 3 incontournables de Terminale au brouillon avant d'ouvrir les indices ou la rédaction complète.</p>
+            </div>
+
+            <!-- Exercice 1 : ∫ x e^x dx -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="px-3 py-1 rounded-lg bg-bleuGlacier text-bleuNuit text-xs font-bold">Exercice 1 • Niveau Fondamental</span>
+                    <button onclick="askAIQuick('Je travaille sur l\'exercice 1 : calculer l\'intégrale de 0 à 1 de x * e^x dx. Peux-tu me donner un premier indice sans me donner la réponse ?')" class="text-xs font-bold text-bleuAcier hover:underline flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Demander un indice au Coach IA
+                    </button>
+                </div>
+                <h3 class="text-lg font-bold text-bleuNuit">
+                    Calculer l'intégrale $I_1 = \int_0^1 x e^x\,dx$
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="toggleHint('ex1-h1')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 1</button>
+                    <button onclick="toggleHint('ex1-h2')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 2</button>
+                    <button onclick="toggleHint('ex1-sol')" class="px-3.5 py-1.5 rounded-xl bg-bleuMarine text-white text-xs font-semibold hover:bg-bleuAcier">Voir la rédaction complète</button>
+                </div>
+                <div id="ex1-h1" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 1 (Choix ALPES) :</strong> Dans le produit $x \cdot e^x$, on a un <strong>P</strong>olynôme ($x$) et une <strong>E</strong>xponentielle ($e^x$). Comme <strong>P</strong> est avant <strong>E</strong> dans ALPES, pose $u(x) = x$ et $v'(x) = e^x$.
+                </div>
+                <div id="ex1-h2" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 2 (Dérivée et primitive) :</strong> On a $u'(x) = 1$ et $v(x) = e^x$. Écris ensuite $[u(x)v(x)]_0^1 - \int_0^1 u'(x)v(x)\,dx$ et n'oublie pas que $e^0 = 1$.
+                </div>
+                <div id="ex1-sol" class="hidden p-4 rounded-xl bg-bleuPale border border-bleuAcier/40 text-sm text-bleuNuit space-y-2">
+                    <p class="font-bold text-bleuMarine">Rédaction complète type Bac :</p>
+                    <p>On pose pour tout $x \in [0\,;\,1]$ : $u(x) = x$ et $v'(x) = e^x$, d'où $u'(x) = 1$ et $v(x) = e^x$.</p>
+                    <p>Les fonctions $u$ et $v$ sont dérivables sur $[0\,;\,1]$ et leurs dérivées $u'$ et $v'$ sont continues sur $[0\,;\,1]$.</p>
+                    <p>Par intégration par parties :</p>
+                    <p>$$I_1 = \Big[x e^x\Big]_0^1 - \int_0^1 1 \cdot e^x\,dx = (1 \cdot e^1 - 0 \cdot e^0) - \Big[e^x\Big]_0^1 = e - (e^1 - e^0) = e - e + 1 = 1$$</p>
+                </div>
+            </div>
+
+            <!-- Exercice 2 : ∫ ln(x) dx avec l'astuce 1 * ln(x) -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="px-3 py-1 rounded-lg bg-bleuAcier text-white text-xs font-bold">Exercice 2 • L'astuce « $1 \times \ln(x)$ »</span>
+                    <button onclick="askAIQuick('Je dois calculer l\'intégrale de 1 à e de ln(x) dx, mais je ne vois qu\'une seule fonction. Peux-tu m\'aider avec un indice ?')" class="text-xs font-bold text-bleuAcier hover:underline flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Demander un indice au Coach IA
+                    </button>
+                </div>
+                <h3 class="text-lg font-bold text-bleuNuit">
+                    Calculer l'intégrale $I_2 = \int_1^e \ln(x)\,dx$
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="toggleHint('ex2-h1')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 1</button>
+                    <button onclick="toggleHint('ex2-h2')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 2</button>
+                    <button onclick="toggleHint('ex2-sol')" class="px-3.5 py-1.5 rounded-xl bg-bleuMarine text-white text-xs font-semibold hover:bg-bleuAcier">Voir la rédaction complète</button>
+                </div>
+                <div id="ex2-h1" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 1 (Faire apparaître un produit) :</strong> Utilise l'astuce classique $\ln(x) = 1 \times \ln(x)$. Tu fais ainsi apparaître un <strong>P</strong>olynôme constant ($1$) et un <strong>L</strong>ogarithme ($\ln x$).
+                </div>
+                <div id="ex2-h2" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 2 (Choix de $u$ et $v'$) :</strong> Dans ALPES, <strong>L</strong> est avant <strong>P</strong> : pose $u(x) = \ln(x)$ (donc $u'(x) = \frac{1}{x}$) et $v'(x) = 1$ (donc $v(x) = x$). Le produit $u'(x)v(x) = \frac{1}{x} \cdot x$ va se simplifier en $1$ !
+                </div>
+                <div id="ex2-sol" class="hidden p-4 rounded-xl bg-bleuPale border border-bleuAcier/40 text-sm text-bleuNuit space-y-2">
+                    <p class="font-bold text-bleuMarine">Rédaction complète type Bac :</p>
+                    <p>On réécrit $I_2 = \int_1^e 1 \cdot \ln(x)\,dx$ et on pose pour tout $x \in [1\,;\,e]$ :</p>
+                    <p>$u(x) = \ln(x) \implies u'(x) = \frac{1}{x}$ et $v'(x) = 1 \implies v(x) = x$.</p>
+                    <p>Les fonctions $u$ et $v$ sont dérivables sur $[1\,;\,e]$ et leurs dérivées $u'$ et $v'$ sont continues sur $[1\,;\,e]$.</p>
+                    <p>$$I_2 = \Big[x\ln(x)\Big]_1^e - \int_1^e \frac{1}{x} \cdot x\,dx = (e\ln(e) - 1\ln(1)) - \int_1^e 1\,dx = (e \cdot 1 - 0) - \Big[x\Big]_1^e = e - (e - 1) = 1$$</p>
+                </div>
+            </div>
+
+            <!-- Exercice 3 : ∫ x^2 cos(x) dx par double IPP -->
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="px-3 py-1 rounded-lg bg-bleuNuit text-white text-xs font-bold">Exercice 3 • Double IPP (Niveau Bac)</span>
+                    <button onclick="askAIQuick('Je dois calculer l\'intégrale de 0 à pi de x^2 * cos(x) dx par double intégration par parties. Peux-tu me guider étape par étape avec des indices ?')" class="text-xs font-bold text-bleuAcier hover:underline flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Demander un indice au Coach IA
+                    </button>
+                </div>
+                <h3 class="text-lg font-bold text-bleuNuit">
+                    Calculer par double intégration par parties $I_3 = \int_0^{\pi} x^2 \cos(x)\,dx$
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="toggleHint('ex3-h1')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 1</button>
+                    <button onclick="toggleHint('ex3-h2')" class="px-3.5 py-1.5 rounded-xl bg-bleuPale border border-bleuGlacier text-xs font-semibold text-bleuMarine hover:bg-bleuGlacier/50">Indice 2</button>
+                    <button onclick="toggleHint('ex3-sol')" class="px-3.5 py-1.5 rounded-xl bg-bleuMarine text-white text-xs font-semibold hover:bg-bleuAcier">Voir la rédaction complète</button>
+                </div>
+                <div id="ex3-h1" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 1 (Première IPP) :</strong> Avec ALPES (<strong>P</strong>olynôme avant <strong>S</strong>inus/Cosinus), pose $u(x) = x^2$ ($u'(x) = 2x$) et $v'(x) = \cos(x)$ ($v(x) = \sin(x)$). Tu vas faire baisser le degré du polynôme de $2$ à $1$.
+                </div>
+                <div id="ex3-h2" class="hidden p-3.5 rounded-xl bg-bleuGlacier/40 text-sm text-bleuNuit">
+                    <strong>Indice 2 (Deuxième IPP) :</strong> Après la première IPP, il te reste $-2\int_0^{\pi} x \sin(x)\,dx$. Applique une seconde IPP sur $\int_0^{\pi} x \sin(x)\,dx$ en posant $u_2(x) = x$ ($u_2'(x) = 1$) et $v_2'(x) = \sin(x)$ ($v_2(x) = -\cos(x)$). Attention aux signes moins !
+                </div>
+                <div id="ex3-sol" class="hidden p-4 rounded-xl bg-bleuPale border border-bleuAcier/40 text-sm text-bleuNuit space-y-2.5">
+                    <p class="font-bold text-bleuMarine">Rédaction complète type Bac :</p>
+                    <p><strong>1ère IPP :</strong> On pose $u(x) = x^2$ ($u'(x) = 2x$) et $v'(x) = \cos(x)$ ($v(x) = \sin(x)$), fonctions de classe $\mathcal{C}^1$ sur $[0\,;\,\pi]$ :</p>
+                    <p>$$I_3 = \Big[x^2\sin(x)\Big]_0^\pi - \int_0^\pi 2x\sin(x)\,dx = (\pi^2\sin\pi - 0) - 2\int_0^\pi x\sin(x)\,dx = -2\int_0^\pi x\sin(x)\,dx$$</p>
+                    <p><strong>2ème IPP :</strong> Calculons $J = \int_0^\pi x\sin(x)\,dx$ avec $u_2(x) = x$ ($u_2'(x) = 1$) et $v_2'(x) = \sin(x)$ ($v_2(x) = -\cos(x)$) de classe $\mathcal{C}^1$ sur $[0\,;\,\pi]$ :</p>
+                    <p>$$J = \Big[-x\cos(x)\Big]_0^\pi - \int_0^\pi (-\cos(x))\,dx = (-\pi\cos\pi - 0) + \Big[\sin(x)\Big]_0^\pi = -\pi(-1) + (\sin\pi - \sin 0) = \pi$$</p>
+                    <p><strong>Conclusion :</strong> $I_3 = -2J = -2\pi$.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             RUBRIQUE 4 : QUIZ (4 QUESTIONS RAPIDES DE VÉRIFICATION DE COURS)
+             ================================================================ -->
+        <section id="section-quiz" class="tab-section hidden space-y-6">
+            <div class="border-b border-bleuGlacier pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-bleuAcier">Rubrique 4</span>
+                    <h2 class="text-2xl font-bold text-bleuNuit mt-1">Quiz : 4 questions rapides de vérification de cours</h2>
+                    <p class="text-sm text-bleuMarine/80 mt-1">Teste tes automatismes avec correction instantanée.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="qq-score-badge" class="px-4 py-2 rounded-xl bg-bleuNuit text-white font-bold text-sm shadow-sm">
+                        Score : 0 / 4
+                    </span>
+                    <button onclick="resetQuickQuiz()" class="px-3.5 py-2 rounded-xl border border-bleuGlacier bg-white text-bleuMarine hover:bg-bleuPale text-xs font-semibold transition-all">
+                        Réinitialiser
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="quick-quiz-grid">
+                <!-- Généré dynamiquement par JS -->
+            </div>
+        </section>
+
+        <!-- ================================================================
+             RUBRIQUE 5 : QCM (4 OPTIONS, 1 SEULE BONNE RÉPONSE)
+             ================================================================ -->
+        <section id="section-qcm" class="tab-section hidden space-y-6">
+            <div class="border-b border-bleuGlacier pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-bleuAcier">Rubrique 5</span>
+                <h2 class="text-2xl font-bold text-bleuNuit mt-1">QCM Type Bac (4 options • 1 seule bonne réponse)</h2>
+                <p class="text-sm text-bleuMarine/80 mt-1">6 questions à choix multiples (A, B, C, D) avec validation immédiate et analyse détaillée des pièges.</p>
+            </div>
+
+            <div class="bg-white border border-bleuGlacier rounded-2xl p-6 sm:p-8 shadow-sm max-w-4xl mx-auto">
+                <!-- Barre de progression -->
+                <div class="flex items-center justify-between text-xs font-bold text-bleuMarine mb-2">
+                    <span id="qcm-counter">Question 1 sur 6</span>
+                    <span id="qcm-score" class="px-3 py-1 rounded-full bg-bleuGlacier text-bleuNuit">Score : 0 / 6</span>
+                </div>
+                <div class="w-full h-2.5 bg-bleuPale rounded-full overflow-hidden border border-bleuGlacier mb-8">
+                    <div id="qcm-bar" class="h-full bg-bleuAcier transition-all duration-300" style="width: 16.6%;"></div>
+                </div>
+
+                <!-- Zone Question -->
+                <div id="qcm-body">
+                    <h3 id="qcm-question" class="text-lg sm:text-xl font-bold text-bleuNuit mb-6 leading-relaxed"></h3>
+                    <div id="qcm-options" class="space-y-3"></div>
+                </div>
+
+                <!-- Feedback détaillé -->
+                <div id="qcm-feedback" class="hidden mt-6 p-4 rounded-xl border text-sm leading-relaxed"></div>
+
+                <!-- Navigation QCM -->
+                <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                    <button onclick="askAIHelpOnCurrentQCM()" class="text-xs font-bold text-bleuAcier hover:underline flex items-center gap-1.5">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i> Demander un indice au Coach IA sur cette question
+                    </button>
+                    <button id="qcm-next-btn" onclick="nextQCM()" class="hidden px-6 py-2.5 rounded-xl bg-bleuNuit text-white hover:bg-bleuAcier font-semibold text-sm transition-all">
+                        Question suivante →
+                    </button>
+                </div>
+
+                <!-- Résultat Final -->
+                <div id="qcm-result" class="hidden text-center py-6 space-y-4">
+                    <div class="w-16 h-16 rounded-2xl bg-bleuGlacier text-bleuNuit flex items-center justify-center mx-auto font-bold text-2xl">
+                        ★
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-bleuNuit">Bilan du QCM Type Bac</h3>
+                    <p id="qcm-final-score" class="text-lg font-bold text-bleuAcier"></p>
+                    <p id="qcm-final-msg" class="text-sm text-bleuMarine max-w-lg mx-auto"></p>
+                    <div class="flex flex-wrap justify-center gap-3 pt-3">
+                        <button onclick="restartQCM()" class="px-5 py-2.5 rounded-xl border border-bleuGlacier text-bleuNuit hover:bg-bleuPale font-semibold text-sm transition-all">
+                            Recommencer le QCM
+                        </button>
+                        <button onclick="askAIQuick('Je viens de terminer le QCM sur l\'intégration par parties. Peux-tu me proposer une nouvelle question QCM à 4 options (A, B, C, D) avec une seule bonne réponse pour continuer à m\'entraîner ?')" class="px-5 py-2.5 rounded-xl bg-bleuMarine text-white hover:bg-bleuAcier font-semibold text-sm transition-all">
+                            Nouveau QCM généré par l'IA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= PIED DE PAGE ================= -->
+    <footer class="bg-bleuNuit text-bleuGlacier py-6 mt-12 border-t border-bleuMarine">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs">
+            <span class="font-semibold text-white">Intégral par partie — Ressource pédagogique Terminale</span>
+            <span>Rendu mathématique MathJax v3 • Coach Maths Terminale IA</span>
+        </div>
+    </footer>
+
+    <!-- ================= AGENT IA PÉDAGOGIQUE (COACH MATHS TERMINALE) ================= -->
+    <button onclick="toggleAIChat()" aria-label="Ouvrir le Coach Maths Terminale" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-2xl bg-bleuNuit text-white shadow-xl hover:bg-bleuAcier hover:scale-105 transition-all flex items-center justify-center border-2 border-bleuGlacier">
+        <i data-lucide="bot" class="w-7 h-7"></i>
+    </button>
+
+    <div id="ai-chat-panel" class="hidden fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[550px] max-h-[78vh] bg-white border border-bleuGlacier rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <!-- Header Chat -->
+        <div class="bg-bleuNuit text-white px-5 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-bleuAcier text-white flex items-center justify-center font-bold">
+                    $\int$
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">Coach Maths Terminale</h3>
+                    <span class="text-[11px] text-bleuGlacier flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Assistant IA • Indices progressifs
+                    </span>
+                </div>
+            </div>
+            <button onclick="toggleAIChat(false)" aria-label="Fermer le chat" class="text-bleuGlacier hover:text-white p-1">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Messages -->
+        <div id="ai-messages" class="flex-grow p-4 overflow-y-auto chat-scroll space-y-4 bg-bleuPale">
+            <div class="flex items-start gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-bleuMarine text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">IA</div>
+                <div class="bg-white border border-bleuGlacier rounded-2xl rounded-tl-none px-4 py-3 text-sm text-bleuNuit shadow-sm leading-relaxed">
+                    Bonjour ! Je suis ton <strong>Coach Maths Terminale</strong>. Pose-moi une question sur le cours, demande un exercice supplémentaire ou partage l'intégrale qui te bloque : je te guiderai avec des <strong>indices progressifs</strong> sans te gâcher le plaisir de trouver !
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestions rapides -->
+        <div class="px-3 py-2 bg-white border-t border-bleuGlacier flex gap-1.5 overflow-x-auto">
+            <button onclick="askAIQuick('Explique-moi avec des mots simples comment fonctionne la règle ALPES.')" class="whitespace-nowrap px-2.5 py-1 rounded-lg bg-bleuPale border border-bleuGlacier text-[11px] font-semibold text-bleuMarine hover:bg-bleuGlacier/50">
+                Règle ALPES ?
+            </button>
+            <button onclick="askAIQuick('Pourquoi faut-il vérifier que u et v sont de classe C1 ?')" class="whitespace-nowrap px-2.5 py-1 rounded-lg bg-bleuPale border border-bleuGlacier text-[11px] font-semibold text-bleuMarine hover:bg-bleuGlacier/50">
+                Classe C1 ?
+            </button>
+            <button onclick="askAIQuick('Propose-moi un nouvel exercice d\'intégration par parties niveau Terminale.')" class="whitespace-nowrap px-2.5 py-1 rounded-lg bg-bleuPale border border-bleuGlacier text-[11px] font-semibold text-bleuMarine hover:bg-bleuGlacier/50">
+                Nouvel exercice
+            </button>
+            <button onclick="askAIQuick('Génère une question QCM à 4 options (A, B, C, D) sur l\'intégration par parties.')" class="whitespace-nowrap px-2.5 py-1 rounded-lg bg-bleuPale border border-bleuGlacier text-[11px] font-semibold text-bleuMarine hover:bg-bleuGlacier/50">
+                Quiz QCM IA
+            </button>
+        </div>
+
+        <!-- Input utilisateur -->
+        <form onsubmit="handleAISubmit(event)" class="p-3 bg-white border-t border-bleuGlacier flex items-center gap-2">
+            <input type="text" id="ai-input" placeholder="Pose ta question ou propose ton calcul..." autocomplete="off" class="flex-grow px-3.5 py-2.5 rounded-xl bg-bleuPale border border-bleuGlacier text-sm text-bleuNuit focus:outline-none focus:border-bleuAcier">
+            <button type="submit" aria-label="Envoyer" class="p-2.5 rounded-xl bg-bleuMarine text-white hover:bg-bleuAcier transition-colors shrink-0">
+                <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- ================= LOGIQUE JAVASCRIPT ================= -->
+    <script>
+        lucide.createIcons();
+
+        function renderMath() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(() => {});
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // 1. GESTION DES ONGLETS (5 RUBRIQUES)
+        // ----------------------------------------------------------------
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById('section-' + tabId);
+            if (target) target.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('bg-bleuAcier', 'text-white', 'font-semibold');
+                btn.classList.add('text-bleuGlacier', 'font-medium');
+            });
+            const active = document.getElementById('tab-' + tabId);
+            if (active) {
+                active.classList.remove('text-bleuGlacier', 'font-medium');
+                active.classList.add('bg-bleuAcier', 'text-white', 'font-semibold');
+            }
+            renderMath();
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function toggleHint(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('hidden');
+                renderMath();
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // 2. LOGIQUE ACTIVITÉ DE DÉCOUVERTE (RUBRIQUE 1)
+        // ----------------------------------------------------------------
+        function checkDiscoveryStep1(choice) {
+            const fb = document.getElementById('disc-fb-1');
+            fb.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-900', 'bg-amber-50', 'text-amber-900');
+            if (choice === 'correct') {
+                fb.classList.add('bg-emerald-50', 'text-emerald-900');
+                fb.innerHTML = "✅ <strong>Parfait !</strong> $(u \\cdot v)'(x) = u'(x)v(x) + u(x)v'(x)$. L'étape 2 est maintenant débloquée ci-dessous.";
+                const s2 = document.getElementById('disc-step-2');
+                s2.classList.remove('opacity-60', 'pointer-events-none');
+            } else {
+                fb.classList.add('bg-amber-50', 'text-amber-900');
+                fb.innerHTML = "❌ Ce n'est pas la bonne formule. Clique sur « Besoin d'un indice ? » pour te souvenir de la dérivation d'un produit.";
+            }
+            renderMath();
+        }
+
+        function checkDiscoveryStep2(choice) {
+            const fb = document.getElementById('disc-fb-2');
+            fb.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-900', 'bg-amber-50', 'text-amber-900');
+            if (choice === 'correct') {
+                fb.classList.add('bg-emerald-50', 'text-emerald-900');
+                fb.innerHTML = "✅ <strong>Exact !</strong> L'intégrale de la dérivée $(u \\cdot v)'$ entre $a$ et $b$ vaut $[u(x)v(x)]_a^b$.";
+                document.getElementById('disc-step-3').classList.remove('hidden');
+            } else {
+                fb.classList.add('bg-amber-50', 'text-amber-900');
+                fb.innerHTML = "❌ Attention : intégrer une dérivée permet de remonter à la fonction de départ $(u \\cdot v)$, pas de dériver à nouveau !";
+            }
+            renderMath();
+        }
+
+        // ----------------------------------------------------------------
+        // 3. QUIZ RAPIDE (4 QUESTIONS DE VÉRIFICATION DE COURS - RUBRIQUE 4)
+        // ----------------------------------------------------------------
+        const quickQuizItems = [
+            {
+                q: "Vrai ou Faux : Pour appliquer l'intégration par parties sur $[a\\,;\\,b]$, il suffit que $u$ et $v$ soient continues sur $[a\\,;\\,b]$.",
+                a: "Vrai",
+                b: "Faux (elles doivent être de classe $\\mathcal{C}^1$)",
+                correct: "b",
+                exp: "Faux ! Il faut que $u$ et $v$ soient <strong>dérivables</strong> et que leurs dérivées $u'$ et $v'$ soient <strong>continues</strong> sur $[a\\,;\\,b]$."
+            },
+            {
+                q: "Dans $\\int_1^2 x^3 \\ln(x)\\,dx$, selon la règle ALPES, quelle fonction choisit-on pour $u(x)$ ?",
+                a: "$u(x) = \\ln(x)$",
+                b: "$u(x) = x^3$",
+                correct: "a",
+                exp: "Dans ALPES, <strong>L</strong>ogarithme passe avant <strong>P</strong>olynôme. On dérive donc $u(x) = \\ln(x)$ en $u'(x) = \\frac{1}{x}$."
+            },
+            {
+                q: "Dans $\\int_a^b u(x)v'(x)\\,dx = [u(x)v(x)]_a^b \\; \\square \\; \\int_a^b u'(x)v(x)\\,dx$, quel signe complète la formule ?",
+                a: "Le signe $+$ (plus)",
+                b: "Le signe $-$ (moins)",
+                correct: "b",
+                exp: "C'est toujours un signe <strong>moins ($-$)</strong>, issu de la soustraction de $\\int_a^b u'(x)v(x)\\,dx$ dans la dérivée du produit."
+            },
+            {
+                q: "Si on pose $v'(x) = \\sin(x)$, quelle primitive $v(x)$ doit-on écrire ?",
+                a: "$v(x) = -\\cos(x)$",
+                b: "$v(x) = \\cos(x)$",
+                correct: "a",
+                exp: "Attention au signe ! La dérivée de $\\cos(x)$ est $-\\sin(x)$, donc une primitive de $\\sin(x)$ est bien $-\\cos(x)$."
+            }
+        ];
+
+        let qqScore = 0;
+
+        function renderQuickQuiz() {
+            qqScore = 0;
+            updateQQScore();
+            const grid = document.getElementById('quick-quiz-grid');
+            grid.innerHTML = '';
+            quickQuizItems.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-bleuGlacier rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <span class="text-xs font-bold uppercase text-bleuAcier">Vérification #${idx + 1}</span>
+                        <p class="font-semibold text-bleuNuit text-sm sm:text-base leading-relaxed">${item.q}</p>
+                        <div class="grid grid-cols-1 gap-2 pt-1">
+                            <button onclick="answerQuickQuiz(${idx}, 'a', this)" class="qq-btn-${idx} p-3 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-left text-sm font-medium text-bleuNuit bg-bleuPale/40 transition-all">${item.a}</button>
+                            <button onclick="answerQuickQuiz(${idx}, 'b', this)" class="qq-btn-${idx} p-3 rounded-xl border border-bleuGlacier hover:border-bleuAcier text-left text-sm font-medium text-bleuNuit bg-bleuPale/40 transition-all">${item.b}</button>
+                        </div>
+                    </div>
+                    <div id="qq-fb-${idx}" class="hidden p-3.5 rounded-xl text-xs leading-relaxed"></div>
+                `;
+                grid.appendChild(card);
+            });
+            renderMath();
+        }
+
+        function updateQQScore() {
+            const badge = document.getElementById('qq-score-badge');
+            if (badge) badge.textContent = `Score : ${qqScore} / ${quickQuizItems.length}`;
+        }
+
+        function answerQuickQuiz(idx, choice, btn) {
+            const item = quickQuizItems[idx];
+            const fb = document.getElementById(`qq-fb-${idx}`);
+            document.querySelectorAll(`.qq-btn-${idx}`).forEach(b => b.disabled = true);
+
+            fb.classList.remove('hidden');
+            if (choice === item.correct) {
+                qqScore++;
+                updateQQScore();
+                btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                fb.classList.add('bg-emerald-50', 'text-emerald-900');
+                fb.innerHTML = `✅ <strong>Exact !</strong> ${item.exp}`;
+            } else {
+                btn.classList.add('border-rose-400', 'bg-rose-50', 'text-rose-900');
+                fb.classList.add('bg-amber-50', 'text-amber-900');
+                fb.innerHTML = `❌ <strong>Piège évité de justesse :</strong> ${item.exp}`;
+            }
+            renderMath();
+        }
+
+        function resetQuickQuiz() {
+            renderQuickQuiz();
+        }
+
+        renderQuickQuiz();
+
+        // ----------------------------------------------------------------
+        // 4. QCM TYPE BAC : 6 QUESTIONS À 4 OPTIONS (A, B, C, D) - RUBRIQUE 5
+        // ----------------------------------------------------------------
+        const qcmData = [
+            {
+                q: "Question 1 : Quelle est la formule exacte de l'intégration par parties pour deux fonctions $u$ et $v$ de classe $\\mathcal{C}^1$ sur $[a\\,;\\,b]$ ?",
+                options: [
+                    "$\\int_a^b u(x)v'(x)\\,dx = [u'(x)v'(x)]_a^b - \\int_a^b u(x)v(x)\\,dx$",
+                    "$\\int_a^b u(x)v'(x)\\,dx = [u(x)v(x)]_a^b - \\int_a^b u'(x)v(x)\\,dx$",
+                    "$\\int_a^b u(x)v'(x)\\,dx = [u(x)v(x)]_a^b + \\int_a^b u'(x)v(x)\\,dx$",
+                    "$\\int_a^b u(x)v'(x)\\,dx = [u(x)v'(x)]_a^b - \\int_a^b u'(x)v'(x)\\,dx$"
+                ],
+                correct: 1,
+                explanation: "<strong>Piège classique :</strong> L'option C met un signe $+$ au lieu du signe $-$ devant la seconde intégrale, et les options A et D dérivent les deux fonctions dans le crochet. La bonne formule est bien $[u(x)v(x)]_a^b - \\int_a^b u'(x)v(x)\\,dx$."
+            },
+            {
+                q: "Question 2 : Pour calculer $I = \\int_0^1 (3x - 2)e^{-x}\\,dx$, quel choix est le plus judicieux selon la méthode ALPES ?",
+                options: [
+                    "$u(x) = e^{-x}$ et $v'(x) = 3x - 2$",
+                    "$u(x) = 3x - 2$ et $v'(x) = e^{-x}$",
+                    "$u(x) = 3$ et $v'(x) = xe^{-x}$",
+                    "$u(x) = (3x-2)e^{-x}$ et $v'(x) = 1$"
+                ],
+                correct: 1,
+                explanation: "<strong>Piège de choix :</strong> Si on choisissait $v'(x) = 3x-2$ (option A), le degré du polynôme augmenterait en $x^2$ ! Avec ALPES, <strong>P</strong>olynôme passe avant <strong>E</strong>xponentielle : poser $u(x) = 3x-2$ donne $u'(x) = 3$, ce qui fait disparaître le $x$."
+            },
+            {
+                q: "Question 3 : Quelle est la valeur exacte de l'intégrale $J = \\int_0^1 x e^x\\,dx$ ?",
+                options: [
+                    "$e - 1$",
+                    "$e$",
+                    "$1$",
+                    "$2e - 1$"
+                ],
+                correct: 2,
+                explanation: "<strong>Piège de borne inférieure :</strong> Beaucoup d'élèves oublient que $e^0 = 1$ (et non $0$ !). On a $[xe^x]_0^1 - [e^x]_0^1 = (e - 0) - (e^1 - e^0) = e - (e - 1) = 1$."
+            },
+            {
+                q: "Question 4 : Lorsqu'on calcule $\\int_1^e x \\ln(x)\\,dx$, on pose $u(x) = \\ln(x)$ et $v'(x) = x$. Que vaut alors la nouvelle intégrale $\\int_1^e u'(x)v(x)\\,dx$ ?",
+                options: [
+                    "$\\int_1^e \\frac{x^2}{2}\\,dx$",
+                    "$\\int_1^e \\frac{1}{2}x\\,dx$",
+                    "$\\int_1^e x\\,dx$",
+                    "$\\int_1^e \\ln(x)\\,dx$"
+                ],
+                correct: 1,
+                explanation: "<strong>Calcul intermédiaire :</strong> On a $u'(x) = \\frac{1}{x}$ et $v(x) = \\frac{x^2}{2}$. En simplifiant par $x$, le produit $u'(x)v(x)$ vaut $\\frac{1}{x} \\times \\frac{x^2}{2} = \\frac{1}{2}x$."
+            },
+            {
+                q: "Question 5 : Quelle est la valeur de $\\int_0^{\\pi/2} x \\sin(x)\\,dx$ ?",
+                options: [
+                    "$0$",
+                    "$\\frac{\\pi}{2}$",
+                    "$1$",
+                    "$-1$"
+                ],
+                correct: 2,
+                explanation: "<strong>Piège de signe trigonométrique :</strong> Avec $u(x)=x$ et $v'(x)=\\sin(x) \\implies v(x)=-\\cos(x)$, on obtient $[-x\\cos x]_0^{\\pi/2} - \\int_0^{\\pi/2} (-\\cos x)\\,dx = 0 + [\\sin x]_0^{\\pi/2} = \\sin(\\pi/2) - \\sin(0) = 1$."
+            },
+            {
+                q: "Question 6 : On souhaite trouver une primitive sur $]0\\,;\\,+\\infty[$ de $f(x) = \\ln(x)$ à l'aide d'une intégration par parties. Quelle expression obtient-on ?",
+                options: [
+                    "$x\\ln(x) + x + C$",
+                    "$\\frac{1}{x} + C$",
+                    "$x\\ln(x) - x + C$",
+                    "$\\ln(x) - 1 + C$"
+                ],
+                correct: 2,
+                explanation: "<strong>Piège dérivée vs primitive :</strong> L'option B ($\frac{1}{x}$) est la <em>dérivée</em> de $\\ln(x)$ ! En écrivant $1 \\cdot \\ln(x)$ avec $u(x)=\\ln(x)$ et $v'(x)=1$, on trouve $x\\ln(x) - \\int 1\\,dx = x\\ln(x) - x + C$."
+            }
+        ];
+
+        let qcmIndex = 0;
+        let qcmScore = 0;
+        let qcmLocked = false;
+
+        function renderQCM() {
+            qcmLocked = false;
+            const current = qcmData[qcmIndex];
+            document.getElementById('qcm-counter').textContent = `Question ${qcmIndex + 1} sur ${qcmData.length}`;
+            document.getElementById('qcm-score').textContent = `Score : ${qcmScore} / ${qcmData.length}`;
+            document.getElementById('qcm-bar').style.width = `${((qcmIndex + 1) / qcmData.length) * 100}%`;
+
+            document.getElementById('qcm-question').innerHTML = current.q;
+            document.getElementById('qcm-feedback').classList.add('hidden');
+            document.getElementById('qcm-next-btn').classList.add('hidden');
+
+            const optBox = document.getElementById('qcm-options');
+            optBox.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            current.options.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = "qcm-opt w-full text-left p-4 rounded-xl border border-bleuGlacier hover:border-bleuAcier bg-bleuPale/40 hover:bg-bleuPale text-bleuNuit text-sm sm:text-base font-medium transition-all flex items-center gap-3.5";
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-white border border-bleuGlacier text-bleuMarine font-bold text-xs flex items-center justify-center shrink-0">${letters[i]}</span>
+                    <span class="flex-grow">${optText}</span>
+                `;
+                btn.onclick = () => selectQCMOption(i, btn);
+                optBox.appendChild(btn);
+            });
+            renderMath();
+        }
+
+        function selectQCMOption(chosenIdx, btnEl) {
+            if (qcmLocked) return;
+            qcmLocked = true;
+
+            const current = qcmData[qcmIndex];
+            const allBtns = document.querySelectorAll('.qcm-opt');
+
+            allBtns.forEach((b, idx) => {
+                b.disabled = true;
+                if (idx === current.correct) {
+                    b.classList.remove('border-bleuGlacier', 'bg-bleuPale/40');
+                    b.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                } else if (idx === chosenIdx && chosenIdx !== current.correct) {
+                    b.classList.remove('border-bleuGlacier', 'bg-bleuPale/40');
+                    b.classList.add('border-rose-400', 'bg-rose-50', 'text-rose-900');
+                }
+            });
+
+            const fb = document.getElementById('qcm-feedback');
+            fb.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900');
+
+            if (chosenIdx === current.correct) {
+                qcmScore++;
+                document.getElementById('qcm-score').textContent = `Score : ${qcmScore} / ${qcmData.length}`;
+                fb.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                fb.innerHTML = `✅ <strong>Bonne réponse !</strong> ${current.explanation}`;
+            } else {
+                fb.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+                fb.innerHTML = `❌ <strong>Réponse incorrecte.</strong> ${current.explanation}`;
+            }
+
+            const nextBtn = document.getElementById('qcm-next-btn');
+            nextBtn.textContent = qcmIndex === qcmData.length - 1 ? "Voir mon bilan final" : "Question suivante →";
+            nextBtn.classList.remove('hidden');
+            renderMath();
+        }
+
+        function nextQCM() {
+            qcmIndex++;
+            if (qcmIndex < qcmData.length) {
+                renderQCM();
+            } else {
+                document.getElementById('qcm-body').classList.add('hidden');
+                document.getElementById('qcm-feedback').classList.add('hidden');
+                document.getElementById('qcm-next-btn').classList.add('hidden');
+
+                const res = document.getElementById('qcm-result');
+                res.classList.remove('hidden');
+                document.getElementById('qcm-final-score').textContent = `Ton score : ${qcmScore} / ${qcmData.length}`;
+
+                let msg = "";
+                if (qcmScore === 6) msg = "Excellent (6/6) ! Tu maîtrises parfaitement la formule, la règle ALPES et tous les pièges classiques du Bac.";
+                else if (qcmScore >= 4) msg = "Très bien ! Relis les explications des questions manquées pour sécuriser tous les points le jour de l'épreuve.";
+                else msg = "Continue de t'entraîner ! Retourne consulter le Point de note et demande des indices au Coach Maths Terminale.";
+                document.getElementById('qcm-final-msg').textContent = msg;
+            }
+        }
+
+        function restartQCM() {
+            qcmIndex = 0;
+            qcmScore = 0;
+            document.getElementById('qcm-result').classList.add('hidden');
+            document.getElementById('qcm-body').classList.remove('hidden');
+            renderQCM();
+        }
+
+        function askAIHelpOnCurrentQCM() {
+            const current = qcmData[qcmIndex];
+            const cleanQ = current.q.replace(/\$/g, '');
+            askAIQuick(`Je bloque sur cette question du QCM : "${cleanQ}". Peux-tu me donner un indice méthodologique sans me révéler quelle lettre (A, B, C ou D) est la bonne réponse ?`);
+        }
+
+        renderQCM();
+
+        // ----------------------------------------------------------------
+        // 5. AGENT IA PÉDAGOGIQUE SOCRATIQUE (« COACH MATHS TERMINALE »)
+        // ----------------------------------------------------------------
+        const apiKey = ""; // Clé API fournie automatiquement au runtime ou mode secours socratique actif
+        let aiConversation = [];
+
+        const systemPrompt = `Tu es « Coach Maths Terminale », un assistant pédagogique bienveillant spécialisé en mathématiques pour des élèves de Terminale sur le chapitre de l'Intégration par parties.
+Règles pédagogiques strictes :
+1. Réponds aux questions des élèves sur les 5 rubriques du site (Découverte, Point de note, Exercices d'application, Quiz, QCM).
+2. Explique les notions avec des mots simples, clairs et rigoureux mathématiquement (utilise la notation LaTeX $...$ pour les formules).
+3. Approche SOCRATIQUE OBLIGATOIRE : ne donne JAMAIS directement la réponse finale d'un exercice ou d'un QCM. Donne des indices progressifs (choix de u et v' avec ALPES, calcul d'une primitive, gestion d'un signe moins) et pose une question courte pour encourager l'élève à réfléchir de manière autonome.
+4. Sur demande, propose des exercices ou des questions QCM supplémentaires (4 options A, B, C, D avec une seule bonne réponse).`;
+
+        function toggleAIChat(force) {
+            const panel = document.getElementById('ai-chat-panel');
+            if (typeof force === 'boolean') {
+                if (force) panel.classList.remove('hidden');
+                else panel.classList.add('hidden');
+            } else {
+                panel.classList.toggle('hidden');
+            }
+            if (!panel.classList.contains('hidden')) {
+                document.getElementById('ai-input').focus();
+                renderMath();
+            }
+        }
+
+        function askAIQuick(prompt) {
+            toggleAIChat(true);
+            sendToCoachAI(prompt);
+        }
+
+        function handleAISubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('ai-input');
+            const val = input.value.trim();
+            if (!val) return;
+            input.value = '';
+            sendToCoachAI(val);
+        }
+
+        function addMessageBubble(role, text) {
+            const box = document.getElementById('ai-messages');
+            const div = document.createElement('div');
+            const formatted = text
+                .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+
+            if (role === 'user') {
+                div.className = "flex justify-end";
+                div.innerHTML = `<div class="bg-bleuMarine text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm max-w-[82%] shadow-sm">${formatted}</div>`;
+            } else {
+                div.className = "flex items-start gap-2.5";
+                div.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-bleuNuit text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">IA</div>
+                    <div class="bg-white border border-bleuGlacier rounded-2xl rounded-tl-none px-4 py-3 text-sm text-bleuNuit max-w-[85%] shadow-sm leading-relaxed">${formatted}</div>
+                `;
+            }
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+            renderMath();
+        }
+
+        function showTyping() {
+            const box = document.getElementById('ai-messages');
+            const div = document.createElement('div');
+            div.id = 'coach-typing';
+            div.className = "flex items-start gap-2.5";
+            div.innerHTML = `
+                <div class="w-7 h-7 rounded-lg bg-bleuNuit text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">IA</div>
+                <div class="bg-white border border-bleuGlacier rounded-2xl rounded-tl-none px-4 py-3.5 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-bleuAcier typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-bleuAcier typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-bleuAcier typing-dot"></span>
+                </div>
+            `;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('coach-typing');
+            if (el) el.remove();
+        }
+
+        async function callGeminiAPI(payload, retries = 3, delay = 1000) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) throw new Error(`Status ${res.status}`);
+                    return await res.json();
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                    await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+                }
+            }
+        }
+
+        async function sendToCoachAI(userMsg) {
+            addMessageBubble('user', userMsg);
+            aiConversation.push({ role: 'user', parts: [{ text: userMsg }] });
+            showTyping();
+
+            const payload = {
+                contents: aiConversation,
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const data = await callGeminiAPI(payload);
+                hideTyping();
+                const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (reply) {
+                    aiConversation.push({ role: 'model', parts: [{ text: reply }] });
+                    addMessageBubble('ai', reply);
+                } else {
+                    addMessageBubble('ai', getSocraticFallback(userMsg));
+                }
+            } catch (err) {
+                hideTyping();
+                addMessageBubble('ai', getSocraticFallback(userMsg));
+            }
+        }
+
+        function getSocraticFallback(msg) {
+            const q = msg.toLowerCase();
+            if (q.includes('alpes') || q.includes('choisir')) {
+                return "💡 **Indice ALPES :** Regarde les deux fonctions dans le produit. La première qui apparaît dans **A**rctan – **L**ogarithme – **P**olynôme – **E**xponentielle – **S**inus/Cosinus doit être posée comme $u(x)$ (celle qu'on dérive). Dans ton intégrale, quelles sont les deux familles de fonctions en présence ?";
+            }
+            if (q.includes('c1') || q.includes('classe')) {
+                return "📘 **Explication simple :** Dire que $u$ et $v$ sont de **classe $\\mathcal{C}^1$** sur $[a\\,;\\,b]$ signifie deux choses : elles sont dérivables sur $[a\\,;\\,b]$ et leurs dérivées $u'$ et $v'$ sont continues. C'est ce qui garantit que toutes les intégrales de la formule existent bien !";
+            }
+            if (q.includes('qcm')) {
+                return "🎯 **Question QCM d'entraînement :** Pour calculer $\\int_1^e x^2 \\ln(x)\\,dx$, quel choix est correct ?\n**A)** $u(x) = x^2$ et $v'(x) = \\ln(x)$\n**B)** $u(x) = \\ln(x)$ et $v'(x) = x^2$\n**C)** $u(x) = 2x$ et $v'(x) = \\frac{1}{x}$\n**D)** $u(x) = x^2\\ln(x)$ et $v'(x) = 1$\n*Indice : utilise l'ordre ALPES et dis-moi quelle lettre tu choisis !*";
+            }
+            if (q.includes('exercice')) {
+                return "✍️ **Nouvel exercice :** Essaie de calculer $K = \\int_0^1 (2x + 1)e^x\\,dx$. Pour démarrer, quelle fonction poses-tu pour $u(x)$ et quelle fonction pour $v'(x)$ ?";
+            }
+            return "👏 Bonne initiative ! Pour avancer pas à pas, identifie d'abord $u(x)$ (la fonction à dériver) et $v'(x)$ (la fonction à primitiver) à l'aide de la règle ALPES. Écris-moi ton choix et je te guiderai pour l'étape suivante !";
+        }
+    </script>
+</body>
+</html>
